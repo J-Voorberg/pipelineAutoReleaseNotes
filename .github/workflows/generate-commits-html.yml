@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -12,7 +15,8 @@ jobs:
       - name: Code ophalen
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # nodig om volledige commitgeschiedenis te zien
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Genereer commits HTML
         run: |
@@ -25,7 +29,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add commits.html
-          git commit -m "Update commits.html"
+          git commit -m "Update commits.html" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
