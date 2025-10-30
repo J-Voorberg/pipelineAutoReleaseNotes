@@ -20,18 +20,10 @@ jobs:
 
       - name: Genereer commits HTML
         run: |
-          echo "<html><head><title>Commits</title></head><body><h1>Commits per branch</h1>" > commits.html
-
-          # Haal alle lokale branches op
-          for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
-            echo "<h2>$branch</h2><ul>" >> commits.html
-            # Toon commits van die branch (niet in andere branches)
-            git log $branch --not --all --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
-            echo "</ul>" >> commits.html
-          done
-
-          echo "</body></html>" >> commits.html
-
+          BRANCH_NAME=${GITHUB_REF_NAME}
+          echo "<html><head><title>Commits</title></head><body><h1>Commits van $BRANCH_NAME</h1><ul>" > commits.html
+          git log $BRANCH_NAME --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
+          echo "</ul></body></html>" >> commits.html
 
       - name: Commit en push HTML
         run: |
