@@ -15,20 +15,22 @@ jobs:
       - name: Code ophalen
         uses: actions/checkout@v4
         with:
-          fetch-depth: 10 # 0 = volledige geschiedenis ophalen; 50 = laatste 50 commits ophalen;
+          fetch-depth: 0 # 0 = volledige geschiedenis ophalen; 50 = laatste 50 commits ophalen;
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Genereer commits HTML
         run: |
-          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > commits.html
+          echo "<html><head><title>Commits</title></head><body><h1>Commits per branch</h1>" > commits.html
 
-          echo "<h2>Pull Request Commits</h2><ul>" >> commits.html
-          git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
-          echo "</ul>" >> commits.html
+          # Haal alle lokale branches op
+          for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+            echo "<h2>$branch</h2><ul>" >> commits.html
+            # Toon commits van die branch (niet in andere branches)
+            git log $branch --not --all --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
+            echo "</ul>" >> commits.html
+          done
 
-          echo "<h2>Andere Commits</h2><ul>" >> commits.html
-          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
-          echo "</ul></body></html>" >> commits.html
+          echo "</body></html>" >> commits.html
 
 
       - name: Commit en push HTML
