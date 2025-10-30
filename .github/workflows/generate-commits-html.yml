@@ -22,13 +22,13 @@ jobs:
         run: |
           echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > commits.html
 
-          echo "<h2>Latest Pull Request Commits</h2><ul>" >> commits.html
-          git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
-          echo "</ul>" >> commits.html
+          echo "<h2>Latest Pull Request Commits</h2><ul>" >> GeneratedCommits.html
+          git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> GeneratedCommits.html
+          echo "</ul>" >> GeneratedCommits.html
 
-          echo "<h2>Latest Other Commits</h2><ul>" >> commits.html
-          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
-          echo "</ul></body></html>" >> commits.html
+          echo "<h2>Other Commits</h2><ul>" >> GeneratedCommits.html
+          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> GeneratedCommits.html
+          echo "</ul></body></html>" >> GeneratedCommits.html
 
 
       - name: Commit en push HTML
