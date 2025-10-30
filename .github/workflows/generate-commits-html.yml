@@ -63,10 +63,7 @@ jobs:
             echo "</ul>" >> "$out"
           done
 
-          # Other commits (non-merge)
-          echo "<h2>Other Commits</h2><ul>" >> "$out"
-          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> "$out"
-          echo "</ul></body></html>" >> "$out"
+          echo "</body></html>" >> "$out"
 
 
       - name: Commit en push HTML
