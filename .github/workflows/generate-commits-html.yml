@@ -20,7 +20,7 @@ jobs:
 
       - name: Genereer commits HTML
         run: |
-          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > commits.html
+          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > GeneratedCommits.html
 
           echo "<h2>Latest Pull Request Commits</h2><ul>" >> GeneratedCommits.html
           git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> GeneratedCommits.html
@@ -35,8 +35,8 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add commits.html
-          git commit -m "Update commits.html" || echo "No changes to commit"
+          git add GeneratedCommits.html
+          git commit -m "Update GeneratedCommits.html" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
