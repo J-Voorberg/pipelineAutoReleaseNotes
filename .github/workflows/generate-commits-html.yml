@@ -1,0 +1,31 @@
+name: Generate Commits HTML
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # nodig om volledige commitgeschiedenis te zien
+
+      - name: Genereer commits HTML
+        run: |
+          echo "<html><head><title>Commits</title></head><body><h1>Laatste commits</h1><ul>" > commits.html
+          git log --pretty=format:"<li>%h - %an: %s (%ci)</li>" >> commits.html
+          echo "</ul></body></html>" >> commits.html
+
+      - name: Commit en push HTML
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add commits.html
+          git commit -m "Update commits.html"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
