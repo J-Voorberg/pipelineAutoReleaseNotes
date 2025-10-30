@@ -15,13 +15,13 @@ jobs:
       - name: Code ophalen
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10 # 0 = volledige geschiedenis ophalen; 50 = laatste 50 commits ophalen;
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Genereer commits HTML
         run: |
-          echo "<html><head><title>Commits</title></head><body><h1>Laatste commits</h1><ul>" > commits.html
-          git log --pretty=format:"<li>%h - %an: %s (%ci)</li>" >> commits.html
+          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1><ul>" > commits.html
+          git log --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
           echo "</ul></body></html>" >> commits.html
 
       - name: Commit en push HTML
