@@ -20,15 +20,53 @@ jobs:
 
       - name: Genereer commits HTML
         run: |
-          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > GeneratedCommits.html
+          set -e
+          out=GeneratedCommits.html
 
-          echo "<h2>Latest Pull Request Commits</h2><ul>" >> GeneratedCommits.html
-          git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> GeneratedCommits.html
-          echo "</ul>" >> GeneratedCommits.html
+          cat > "$out" <<'HTML'
+          <html><head><title>Generated Commits</title></head><body><h1>Commits</h1>
+          HTML
 
-          echo "<h2>Other Commits</h2><ul>" >> GeneratedCommits.html
-          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> GeneratedCommits.html
-          echo "</ul></body></html>" >> GeneratedCommits.html
+          # Latest pull request (merge) commits grouped by merged branch
+          echo "<h2>Latest Pull Request Commits</h2>" >> "$out"
+
+          # For each merge commit: extract SHA, date, author, subject. Then
+          # find parents and list the commits that were merged (commits reachable
+          # from the merge commit but not from the first parent).
+          git log --merges --pretty=format:"%H|%ad|%an|%s" --date=format:'%Y-%m-%d %H:%M' | while IFS='|' read -r sha date author subject; do
+            # Try to extract the branch name from the merge subject (e.g. "from owner/branch")
+            branch=$(echo "$subject" | sed -n "s/.* from \(.*\)/\1/p")
+            if [ -z "$branch" ]; then
+              # fallback: use the full subject if no branch text is found
+              branch="$subject"
+            fi
+
+            # Write the branch/merge heading
+            echo "<h2>$branch</h2>" >> "$out"
+            echo "<ul>" >> "$out"
+
+            # Determine parents of the merge commit. The output is: <sha> <p1> <p2>
+            parents=$(git rev-list --parents -n 1 "$sha")
+            set -- $parents
+            # $1 = merge sha, $2 = parent1 (target/main), $3 = parent2 (source/branch)
+            parent1=$2
+            parent2=$3
+
+            if [ -n "$parent1" ] && [ -n "$parent2" ]; then
+              # List commits that came from the merged branch (commits reachable from parent2 but not from parent1)
+              git log "$parent1".."$parent2" --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> "$out" || true
+            else
+              # If something unexpected happened, show the merge commit itself
+              echo "<li>$date - $author: $subject</li>" >> "$out"
+            fi
+
+            echo "</ul>" >> "$out"
+          done
+
+          # Other commits (non-merge)
+          echo "<h2>Other Commits</h2><ul>" >> "$out"
+          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> "$out"
+          echo "</ul></body></html>" >> "$out"
 
 
       - name: Commit en push HTML
