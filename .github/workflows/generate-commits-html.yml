@@ -2,7 +2,7 @@ name: Generate Commits HTML
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
   contents: write
@@ -20,9 +20,16 @@ jobs:
 
       - name: Genereer commits HTML
         run: |
-          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1><ul>" > commits.html
-          git log --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
+          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > commits.html
+
+          echo "<h2>Pull Request Commits</h2><ul>" >> commits.html
+          git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
+          echo "</ul>" >> commits.html
+
+          echo "<h2>Andere Commits</h2><ul>" >> commits.html
+          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
           echo "</ul></body></html>" >> commits.html
+
 
       - name: Commit en push HTML
         run: |
