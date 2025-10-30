@@ -20,10 +20,16 @@ jobs:
 
       - name: Genereer commits HTML
         run: |
-          BRANCH_NAME=${GITHUB_REF_NAME}
-          echo "<html><head><title>Commits</title></head><body><h1>Commits van $BRANCH_NAME</h1><ul>" > commits.html
-          git log $BRANCH_NAME --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
+          echo "<html><head><title>Commits</title></head><body><h1>Commits</h1>" > commits.html
+
+          echo "<h2>Latest Pull Request Commits</h2><ul>" >> commits.html
+          git log --merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
+          echo "</ul>" >> commits.html
+
+          echo "<h2>Latest Other Commits</h2><ul>" >> commits.html
+          git log --no-merges --pretty=format:"<li>%ad - %an: %s</li>" --date=format:'%Y-%m-%d %H:%M' >> commits.html
           echo "</ul></body></html>" >> commits.html
+
 
       - name: Commit en push HTML
         run: |
