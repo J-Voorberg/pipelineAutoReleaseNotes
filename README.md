@@ -1,2 +1,2 @@
-# pipelineAutoReleaseNotes
+# Pipeline Auto Release Notes
 
