@@ -5,6 +5,10 @@ body {
     color: #333;
 }
 
+h2 {
+    border-bottom: 1px solid #c4c4c4;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
