@@ -1,0 +1,75 @@
+name: Generate Commits Markdown
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Genereer commits Markdown
+        run: |
+          set -e
+          out=GeneratedCommits.md
+
+          echo "# Commits" > "$out"
+          echo "" >> "$out"
+          echo "## Latest Pull Request Commits" >> "$out"
+
+          git log --merges --pretty=format:"%H|%ad|%an|%s" --date=format:'%Y-%m-%d %H:%M' | while IFS='|' read -r sha date author subject; do
+            branch=$(echo "$subject" | sed -n "s/.* from \(.*\)/\1/p")
+            [ -z "$branch" ] && branch="$subject"
+
+            echo "" >> "$out"
+            echo "### $branch" >> "$out"
+            echo "" >> "$out"
+
+            parents=$(git rev-list --parents -n 1 "$sha")
+            set -- $parents
+            parent1=$2
+            parent2=$3
+
+            if [ -n "$parent1" ] && [ -n "$parent2" ]; then
+              git log "$parent1".."$parent2" --pretty=format:"- %ad - %an: %s" --date=format:'%Y-%m-%d %H:%M' >> "$out" || true
+            else
+              echo "- $date - $author: $subject" >> "$out"
+            fi
+          done
+
+          echo "" >> "$out"
+          echo "## Other Commits" >> "$out"
+
+          merged_commits=$(git log --merges --pretty=format:"%H" | while read -r merge_sha; do
+            parents=$(git rev-list --parents -n 1 "$merge_sha")
+            set -- $parents
+            parent1=$2
+            parent2=$3
+            [ -n "$parent1" ] && [ -n "$parent2" ] && git rev-list "$parent1".."$parent2"
+          done)
+
+          git log --no-merges --pretty=format:"%H|%ad|%an|%s" --date=format:'%Y-%m-%d %H:%M' | while IFS='|' read -r sha date author subject; do
+            if ! echo "$merged_commits" | grep -q "$sha"; then
+              echo "- $date - $author: $subject" >> "$out"
+            fi
+          done
+
+      - name: Commit en push Markdown
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add GeneratedCommits.md
+          git commit -m "Update GeneratedCommits.md" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
