@@ -2,7 +2,7 @@ name: Generate Commits Markdown
 
 on:
   push:
-    branches: [main, feature/releaseNotesInMarkDownFile]
+    branches: [main]
 
 permissions:
   contents: write
