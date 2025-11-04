@@ -25,6 +25,10 @@
 - 2025-10-30 11:27 - J.Voorberg: test/1 - 2
 - 2025-10-30 11:27 - J.Voorberg: test/1 - 1
 ## Other Commits
+- 2025-11-04 09:47 - J.Voorberg: removed html git action
+- 2025-10-31 10:06 - github-actions: Update GeneratedCommits.html
+- 2025-10-31 11:06 - J.Voorberg: Removed development.md
+- 2025-10-31 09:49 - github-actions: Update GeneratedCommits.md
 - 2025-10-31 10:49 - J.Voorberg: Created new yaml file for generate commits markdown & adjusted code tfor markdown file instead of html
 - 2025-10-31 09:28 - github-actions: Update GeneratedCommits.html
 - 2025-10-31 08:54 - github-actions: Update GeneratedCommits.html
