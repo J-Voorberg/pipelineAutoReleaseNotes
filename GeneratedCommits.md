@@ -2,6 +2,19 @@
 
 ## Latest Pull Request Commits
 
+### Merge branch 'feature/releaseNotesInMarkDownFile' of https://github.com/J-Voorberg/pipelineAutoReleaseNotes into feature/releaseNotesInMarkDownFile
+
+- 2025-11-04 08:47 - github-actions: Update GeneratedCommits.md
+### main into this branch
+
+- 2025-10-31 10:43 - github-actions: Update GeneratedCommits.html
+- 2025-10-31 11:43 - J.Voorberg: Test/6 (#9)
+- 2025-10-31 10:28 - github-actions: Update GeneratedCommits.html
+- 2025-10-31 11:28 - J.Voorberg: Merge pull request #8 from J-Voorberg/cleanup/projectCleanup
+- 2025-10-31 11:28 - J.Voorberg: Removed unnecessary files and folders that weren't relevent for this project
+### J-Voorberg/cleanup/projectCleanup
+
+- 2025-10-31 11:28 - J.Voorberg: Removed unnecessary files and folders that weren't relevent for this project
 ### J-Voorberg/feature/visualImprovements
 
 - 2025-10-31 10:26 - J.Voorberg: Added lines under html h2
